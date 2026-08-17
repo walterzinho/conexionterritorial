@@ -1,12 +1,17 @@
 ---
-title: "El campo se fortalece con nueva tecnología solar para riego en Cundinamarca"
-description: "Productores locales adoptan sistemas de riego fotovoltaico para optimizar el uso del agua en épocas de verano."
+title: El campo se fortalece con nueva tecnología solar para riego en Cundinamarca
+description: Productores locales adoptan sistemas de riego fotovoltaico para
+  optimizar el uso del agua en épocas de verano.
 pubDate: 2026-08-17T08:00:00.000Z
-heroImage: "/logos/Logo Campesinos en acción.png"
-categoria: "agricultura"
+heroImage: /logos/Logo Campesinos en acción.png
+categoria: medio-ambiente
 destacado: true
-autor: "Redacción Voces Campesinas"
-tags: ["agricultura", "tecnologia", "cundinamarca", "riego"]
+autor: Redacción Voces Campesinas
+tags:
+  - agricultura
+  - tecnologia
+  - cundinamarca
+  - riego
 ---
 
 En las veredas de Cundinamarca, los productores agropecuarios han comenzado a implementar sistemas de riego fotovoltaico, una alternativa sostenible que reduce drásticamente los costos de energía y optimiza el uso del recurso hídrico.

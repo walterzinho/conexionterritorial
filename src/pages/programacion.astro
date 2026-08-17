@@ -1,4 +1,6 @@
 ---
+import '../styles/global.css';
+
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import StreamPlayer from '../components/StreamPlayer.astro';
@@ -14,7 +16,7 @@ const diaHoy = getDiaActual();
     <link rel="icon" type="image/png" href="/logos/Logo Voces 4 mini.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Programación Radial — {SITE_TITLE}</title>
-    <link rel="stylesheet" href="/styles/global.css" />
+    
   </head>
   <body style="background: var(--dark); color: var(--white);">
     <Header currentPath="/programacion" />

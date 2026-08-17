@@ -1,4 +1,6 @@
 ---
+import '../../styles/global.css';
+
 import { getCollection } from 'astro:content';
 import Header from '../../components/Header.astro';
 import Footer from '../../components/Footer.astro';
@@ -15,7 +17,7 @@ allPosts.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
     <link rel="icon" type="image/png" href="/logos/Logo Voces 4 mini.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Noticias y Artículos — {SITE_TITLE}</title>
-    <link rel="stylesheet" href="/styles/global.css" />
+    
   </head>
   <body>
     <Header currentPath="/noticias" />

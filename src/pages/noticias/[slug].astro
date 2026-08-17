@@ -1,0 +1,68 @@
+---
+import { getCollection, render } from 'astro:content';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import StreamPlayer from '../../components/StreamPlayer.astro';
+import { SITE_TITLE } from '../../consts';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('blog');
+  return posts.map(post => ({
+    params: { slug: post.slug },
+    props: { post },
+  }));
+}
+
+const { post } = Astro.props;
+const { Content } = await render(post);
+---
+
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" type="image/png" href="/logos/Logo Voces 4 mini.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{post.data.title} — {SITE_TITLE}</title>
+    <meta name="description" content={post.data.description} />
+    <link rel="stylesheet" href="/styles/global.css" />
+  </head>
+  <body>
+    <Header currentPath="/noticias" />
+
+    <main class="blog-post">
+      <div style="margin-bottom: 1.5rem;">
+        <a href="/noticias" style="font-size: 0.85rem; font-weight: 600; color: var(--green-700);">← Volver a Noticias</a>
+      </div>
+
+      <span class="cat-badge" style="display: inline-block; background: var(--green-700); color: white; padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; margin-bottom: 0.75rem;">
+        {post.data.categoria}
+      </span>
+
+      <h1>{post.data.title}</h1>
+      
+      <div class="meta">
+        <span>📅 {post.data.pubDate.toLocaleDateString('es-CO', { year: 'numeric', month: 'long', day: 'numeric' })}</span>
+        <span>✍️ {post.data.autor}</span>
+      </div>
+
+      {post.data.heroImage && (
+        <img src={post.data.heroImage} alt={post.data.title} style="width: 100%; max-height: 450px; object-fit: cover;" />
+      )}
+
+      <div class="content" style="margin-top: 2rem;">
+        <Content />
+      </div>
+
+      {post.data.tags && post.data.tags.length > 0 && (
+        <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; margin-top: 2rem; padding-top: 1rem; border-top: 1px solid var(--gray-200);">
+          {post.data.tags.map((tag: string) => (
+            <span style="background: var(--gray-200); color: var(--gray-700); padding: 0.2rem 0.6rem; border-radius: 6px; font-size: 0.8rem;">#{tag}</span>
+          ))}
+        </div>
+      )}
+    </main>
+
+    <Footer />
+    <StreamPlayer />
+  </body>
+</html>

@@ -1,0 +1,23 @@
+backend:
+  name: git-gateway
+  branch: main
+
+media_folder: "public/uploads"
+public_folder: "/uploads"
+
+collections:
+  - name: "blog"
+    label: "Noticias"
+    folder: "src/content/blog"
+    create: true
+    slug: "{{slug}}"
+    fields:
+      - { label: "Título", name: "title", widget: "string" }
+      - { label: "Descripción", name: "description", widget: "text" }
+      - { label: "Fecha de publicación", name: "pubDate", widget: "datetime" }
+      - { label: "Imagen principal", name: "heroImage", widget: "image", required: false }
+      - { label: "Categoría", name: "categoria", widget: "select", options: ["agricultura", "ganaderia", "deportes", "medio-ambiente", "rit", "cultura", "comunidad"] }
+      - { label: "Destacado en portada", name: "destacado", widget: "boolean", default: false, required: false }
+      - { label: "Autor", name: "autor", widget: "string", default: "Redacción Voces Campesinas" }
+      - { label: "Tags (separados por coma)", name: "tags", widget: "list", required: false }
+      - { label: "Contenido", name: "body", widget: "markdown" }

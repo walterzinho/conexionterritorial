@@ -1,0 +1,99 @@
+---
+import { getCollection } from 'astro:content';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import StreamPlayer from '../../components/StreamPlayer.astro';
+import { SITE_TITLE, CATEGORIES } from '../../consts';
+
+export async function getStaticPaths() {
+  return CATEGORIES.map(cat => ({
+    params: { slug: cat.slug },
+    props: { category: cat },
+  }));
+}
+
+const { category } = Astro.props;
+const allPosts = await getCollection('blog');
+const posts = allPosts.filter(p => p.data.categoria === category.slug);
+posts.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+---
+
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" type="image/png" href="/logos/Logo Voces 4 mini.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{category.label} — {SITE_TITLE}</title>
+    <link rel="stylesheet" href="/styles/global.css" />
+  </head>
+  <body>
+    <Header currentPath={`/secciones/${category.slug}`} />
+
+    <div class="page-hero">
+      <div class="container">
+        <h1>Sección: {category.label}</h1>
+        <p>Toda la actualidad, reportajes y contenidos sobre {category.label.toLowerCase()} en Voces Campesinas.</p>
+      </div>
+    </div>
+
+    <!-- Categorías barra -->
+    <section class="container" style="padding: 2rem 0 1rem;">
+      <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+        <a href="/noticias" style="background: var(--gray-200); color: var(--gray-700); padding: 0.4rem 1rem; border-radius: 20px; font-size: 0.85rem; font-weight: 600;">Todas</a>
+        {CATEGORIES.map(cat => (
+          <a
+            href={`/secciones/${cat.slug}`}
+            style={`background: ${cat.slug === category.slug ? cat.color : cat.color + '22'}; color: ${cat.slug === category.slug ? 'white' : cat.color}; border: 1px solid ${cat.color}; padding: 0.4rem 1rem; border-radius: 20px; font-size: 0.85rem; font-weight: 600;`}
+          >
+            {cat.label}
+          </a>
+        ))}
+      </div>
+    </section>
+
+    <!-- Listado -->
+    <section class="section" style="padding-top: 1rem;">
+      <div class="container">
+        {posts.length > 0 ? (
+          <div class="news-grid">
+            {posts.map(post => (
+              <a href={`/noticias/${post.slug}`} class="news-card">
+                {post.data.heroImage && (
+                  <img src={post.data.heroImage} alt={post.data.title} class="news-card-img" />
+                )}
+                <div class="news-card-body">
+                  <span class="news-card-cat">{post.data.categoria}</span>
+                  <h3 class="news-card-title">{post.data.title}</h3>
+                  <p class="news-card-desc">{post.data.description}</p>
+                  <div class="news-card-meta">
+                    <span>{post.data.pubDate.toLocaleDateString('es-CO', { year: 'numeric', month: 'short', day: 'numeric' })}</span>
+                    <span>•</span>
+                    <span>{post.data.autor}</span>
+                  </div>
+                </div>
+              </a>
+            ))}
+          </div>
+        ) : (
+          <div style="text-align: center; padding: 4rem 0; color: var(--gray-500);">
+            <h3>No hay noticias en esta sección todavía.</h3>
+            <p style="margin-top: 0.5rem;">Pronto publicaremos contenido exclusivo sobre {category.label}.</p>
+          </div>
+        )}
+      </div>
+    </section>
+
+    {category.slug === 'rit' && (
+      <section style="background: var(--green-100); padding: 3rem 0; margin-top: 2rem;">
+        <div class="container" style="max-width: 800px;">
+          <h2 style="color: var(--green-900); margin-bottom: 1rem;">Acerca de la Red de Información Territorial (RIT)</h2>
+          <p style="margin-bottom: 1rem;">La RIT es una sección colaborativa e impulsada por comunidades rurales para compartir experiencias de radio social, construcción de paz, soberanía alimentaria y saberes del territorio.</p>
+          <p>¿Haces parte de una organización rural o emisora comunitaria y quieres aportar contenido? Escríbenos a través de nuestra sección de contacto.</p>
+        </div>
+      </section>
+    )}
+
+    <Footer />
+    <StreamPlayer />
+  </body>
+</html>

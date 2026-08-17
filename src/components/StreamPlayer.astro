@@ -1,0 +1,164 @@
+---
+import { STREAM_URL } from '../consts';
+---
+
+<div class="stream-player" id="streamPlayerBar">
+  <div class="stream-player-inner">
+    <div class="stream-info">
+      <span class="stream-dot" id="streamDot"></span>
+      <div class="stream-text">
+        <span class="stream-label">En Vivo</span>
+        <span class="stream-name">Voces Campesinas — El Campo Nos Une</span>
+      </div>
+    </div>
+    
+    <div class="stream-controls">
+      <button class="stream-btn" id="playPauseBtn" aria-label="Reproducir / Pausar">
+        <span id="playIcon">▶</span>
+      </button>
+      <audio id="audioElement" src={STREAM_URL} preload="none"></audio>
+      <input type="range" id="volumeSlider" min="0" max="1" step="0.05" value="1" class="volume-slider" aria-label="Volumen" />
+      <span class="volume-icon" id="volumeIcon">🔊</span>
+    </div>
+  </div>
+</div>
+
+<script define:vars={{ STREAM_URL }}>
+  const audio = document.getElementById('audioElement');
+  const btn = document.getElementById('playPauseBtn');
+  const playIcon = document.getElementById('playIcon');
+  const dot = document.getElementById('streamDot');
+  const volumeSlider = document.getElementById('volumeSlider');
+  const volumeIcon = document.getElementById('volumeIcon');
+
+  let isPlaying = false;
+
+  btn.addEventListener('click', () => {
+    if (isPlaying) {
+      audio.pause();
+      audio.src = ''; // disconnect stream to save bandwidth
+      playIcon.textContent = '▶';
+      btn.classList.remove('playing');
+      dot.style.background = '#6b7280';
+      isPlaying = false;
+    } else {
+      audio.src = STREAM_URL;
+      audio.play().then(() => {
+        playIcon.textContent = '⏸';
+        btn.classList.add('playing');
+        dot.style.background = '#22c55e';
+        isPlaying = true;
+      }).catch(err => {
+        console.error("Error al reproducir stream:", err);
+        alert("No se pudo iniciar el streaming. Inténtalo de nuevo.");
+      });
+    }
+  });
+
+  volumeSlider.addEventListener('input', (e) => {
+    audio.volume = e.target.value;
+    if (audio.volume == 0) {
+      volumeIcon.textContent = '🔇';
+    } else if (audio.volume < 0.5) {
+      volumeIcon.textContent = '🔉';
+    } else {
+      volumeIcon.textContent = '🔊';
+    }
+  });
+</script>
+
+<style>
+  .stream-player {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 72px;
+    background: linear-gradient(90deg, #0a1f14, #1a2a22);
+    border-top: 1px solid rgba(255,255,255,0.1);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    padding: 0 1.5rem;
+    box-shadow: 0 -4px 20px rgba(0,0,0,0.3);
+  }
+  .stream-player-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+  .stream-info {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    min-width: 0;
+  }
+  .stream-dot {
+    width: 12px;
+    height: 12px;
+    background: #6b7280;
+    border-radius: 50%;
+    transition: background 0.3s;
+    flex-shrink: 0;
+  }
+  .stream-text {
+    display: flex;
+    flex-direction: column;
+  }
+  .stream-label {
+    font-weight: 700;
+    font-size: 0.7rem;
+    color: #5de08d;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .stream-name {
+    font-size: 0.85rem;
+    color: #ffffff;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .stream-controls {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+  .stream-btn {
+    background: #1a6b3c;
+    border: none;
+    color: white;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    transition: all 0.2s;
+    box-shadow: 0 2px 8px rgba(26,107,60,0.4);
+  }
+  .stream-btn:hover {
+    background: #228b4a;
+    transform: scale(1.05);
+  }
+  .stream-btn.playing {
+    background: #b8845a;
+  }
+  .volume-slider {
+    width: 90px;
+    accent-color: #228b4a;
+    cursor: pointer;
+  }
+  .volume-icon {
+    font-size: 1.1rem;
+  }
+  @media (max-width: 640px) {
+    .volume-slider { display: none; }
+  }
+</style>

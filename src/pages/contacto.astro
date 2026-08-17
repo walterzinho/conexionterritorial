@@ -1,0 +1,64 @@
+---
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import StreamPlayer from '../components/StreamPlayer.astro';
+import { SITE_TITLE } from '../consts';
+---
+
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" type="image/png" href="/logos/Logo Voces 4 mini.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Contacto — {SITE_TITLE}</title>
+    <link rel="stylesheet" href="/styles/global.css" />
+  </head>
+  <body>
+    <Header currentPath="/contacto" />
+
+    <div class="page-hero">
+      <div class="container">
+        <h1>Contacto y Red de Información Territorial</h1>
+        <p>¿Tienes una noticia, un programa o quieres aportar a la radio comunitaria? Escríbenos.</p>
+      </div>
+    </div>
+
+    <section class="contact-section">
+      <div class="contact-grid">
+        <div class="contact-info">
+          <h3 style="color: var(--green-900);">Comunícate con Voces Campesinas</h3>
+          <p>Estamos ubicados en Cundinamarca, conectando las veredas y municipios de Colombia con el mundo.</p>
+          
+          <div style="margin-top: 1.5rem; display: flex; flex-direction: column; gap: 1rem;">
+            <div>
+              <strong>📧 Correo electrónico:</strong>
+              <p style="color: var(--green-700);">contacto@vocescampesinas.co</p>
+            </div>
+            <div>
+              <strong>💬 WhatsApp Comunitario:</strong>
+              <p style="color: var(--green-700);">+57 (300) 000-0000</p>
+            </div>
+            <div>
+              <strong>📻 Emisora Digital:</strong>
+              <p style="color: var(--green-700);">Transmisión 24/7 en vivo</p>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <form class="contact-form" onSubmit="event.preventDefault(); alert('¡Mensaje enviado con éxito! Gracias por comunicarte con Voces Campesinas.');">
+            <h3 style="color: var(--green-900); margin-bottom: 0.5rem;">Envíanos un mensaje</h3>
+            <input type="text" placeholder="Tu Nombre o Organización" required />
+            <input type="email" placeholder="Tu Correo Electrónico" required />
+            <input type="text" placeholder="Asunto (ej. Noticia, Colaboración RIT, Saludo)" required />
+            <textarea placeholder="Escribe tu mensaje aquí..." required></textarea>
+            <button type="submit">Enviar Mensaje</button>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <Footer />
+    <StreamPlayer />
+  </body>
+</html>

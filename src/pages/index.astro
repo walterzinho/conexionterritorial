@@ -1,49 +1,161 @@
 ---
-import BaseHead from '../components/BaseHead.astro';
-import Footer from '../components/Footer.astro';
+import { getCollection } from 'astro:content';
 import Header from '../components/Header.astro';
-import { SITE_DESCRIPTION, SITE_TITLE } from '../consts';
+import Footer from '../components/Footer.astro';
+import StreamPlayer from '../components/StreamPlayer.astro';
+import { SITE_TITLE, SLOGAN_PRIMARY, CATEGORIES } from '../consts';
+import { PROGRAMACION, getDiaActual, getProgramaActual } from '../data/schedule';
+
+const allPosts = await getCollection('blog');
+allPosts.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+
+const destacados = allPosts.filter(p => p.data.destacado).slice(0, 5);
+const ultimasNoticias = allPosts.slice(0, 6);
+const programaActual = getProgramaActual();
+const diaHoy = getDiaActual();
 ---
 
-<!doctype html>
-<html lang="en">
-	<head>
-		<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
-	</head>
-	<body>
-		<Header />
-		<main>
-			<h1>🧑‍🚀 Hello, Astronaut!</h1>
-			<p>
-				Welcome to the official <a href="https://astro.build/">Astro</a> blog starter template. This template
-				serves as a lightweight, minimally-styled starting point for anyone looking to build a personal
-				website, blog, or portfolio with Astro.
-			</p>
-			<p>
-				This template comes with a few integrations already configured in your
-				<code>astro.config.mjs</code> file. You can customize your setup with
-				<a href="https://astro.build/integrations">Astro Integrations</a> to add tools like Tailwind,
-				React, or Vue to your project.
-			</p>
-			<p>Here are a few ideas on how to get started with the template:</p>
-			<ul>
-				<li>Edit this page in <code>src/pages/index.astro</code></li>
-				<li>Edit the site header items in <code>src/components/Header.astro</code></li>
-				<li>Add your name to the footer in <code>src/components/Footer.astro</code></li>
-				<li>Check out the included blog posts in <code>src/content/blog/</code></li>
-				<li>Customize the blog post page layout in <code>src/layouts/BlogPost.astro</code></li>
-			</ul>
-			<p>
-				Have fun! If you get stuck, remember to
-				<a href="https://docs.astro.build/">read the docs</a>
-				or <a href="https://astro.build/chat">join us on Discord</a> to ask questions.
-			</p>
-			<p>
-				Looking for a blog template with a bit more personality? Check out
-				<a href="https://github.com/Charca/astro-blog-template">astro-blog-template</a>
-				by <a href="https://twitter.com/Charca">Maxi Ferreira</a>.
-			</p>
-		</main>
-		<Footer />
-	</body>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" type="image/png" href="/logos/Logo Voces 4 mini.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{SITE_TITLE} — {SLOGAN_PRIMARY}</title>
+    <link rel="stylesheet" href="/styles/global.css" />
+  </head>
+  <body>
+    <Header currentPath="/" />
+
+    <!-- Hero / Destacados -->
+    <section class="hero-section">
+      <div class="container">
+        {programaActual && (
+          <div style="background: rgba(26,107,60,0.3); border: 1px solid var(--green-500); padding: 0.75rem 1.25rem; border-radius: 10px; margin-bottom: 2rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem;">
+            <div style="display: flex; align-items: center; gap: 0.75rem;">
+              <span style="width: 10px; height: 10px; background: #22c55e; border-radius: 50%; animation: pulse 2s infinite;"></span>
+              <div>
+                <strong style="color: var(--green-400); font-size: 0.85rem; text-transform: uppercase;">Al Aire Ahora ({diaHoy} {programaActual.horaInicio} - {programaActual.horaFin}):</strong>
+                <span style="color: white; font-weight: 700; margin-left: 0.5rem;">{programaActual.nombre}</span>
+              </div>
+            </div>
+            <a href="/programacion" style="color: var(--gold-400); font-size: 0.85rem; font-weight: 600;">Ver programación completa →</a>
+          </div>
+        )}
+
+        <div class="section-title" style="color: white; border-bottom-color: var(--green-500);">
+          <span>🌾</span> Destacados del Campo
+        </div>
+
+        {destacados.length > 0 ? (
+          <div class="hero-grid">
+            <a href={`/noticias/${destacados[0].slug}`} class="hero-main">
+              {destacados[0].data.heroImage && (
+                <img src={destacados[0].data.heroImage} alt={destacados[0].data.title} />
+              )}
+              <div class="hero-main-overlay">
+                <span class="cat-badge">{destacados[0].data.categoria}</span>
+                <h2>{destacados[0].data.title}</h2>
+                <p>{destacados[0].data.description}</p>
+              </div>
+            </a>
+            <div style="display: flex; flex-direction: column; gap: 1rem;">
+              {destacados.slice(1, 3).map(post => (
+                <a href={`/noticias/${post.slug}`} class="hero-secondary">
+                  {post.data.heroImage && (
+                    <img src={post.data.heroImage} alt={post.data.title} />
+                  )}
+                  <div class="hero-secondary-overlay">
+                    <span class="cat-badge">{post.data.categoria}</span>
+                    <h3>{post.data.title}</h3>
+                  </div>
+                </a>
+              ))}
+            </div>
+          </div>
+        ) : (
+          <p style="color: var(--gray-400); padding: 2rem 0;">Pronto publicaremos los destacados del campo colombiano.</p>
+        )}
+      </div>
+    </section>
+
+    <!-- Categorías / Secciones Rápidas -->
+    <section class="section" style="background: var(--cream); padding: 2rem 0;">
+      <div class="container">
+        <div style="display: flex; gap: 0.75rem; flex-wrap: wrap; justify-content: center;">
+          {CATEGORIES.map(cat => (
+            <a
+              href={`/secciones/${cat.slug}`}
+              style={`background: ${cat.color}; color: white; padding: 0.5rem 1.25rem; border-radius: 24px; font-weight: 600; font-size: 0.85rem; box-shadow: 0 2px 6px rgba(0,0,0,0.1); transition: transform 0.2s;`}
+            >
+              {cat.label}
+            </a>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <!-- Últimas Noticias -->
+    <section class="section">
+      <div class="container">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+          <h2 class="section-title" style="margin-bottom: 0; border-bottom: none;">
+            <span>📰</span> Últimas Noticias
+          </h2>
+          <a href="/noticias" style="font-weight: 600; color: var(--green-700);">Ver todas las noticias →</a>
+        </div>
+
+        <div class="news-grid">
+          {ultimasNoticias.map(post => (
+            <a href={`/noticias/${post.slug}`} class="news-card">
+              {post.data.heroImage && (
+                <img src={post.data.heroImage} alt={post.data.title} class="news-card-img" />
+              )}
+              <div class="news-card-body">
+                <span class="news-card-cat">{post.data.categoria}</span>
+                <h3 class="news-card-title">{post.data.title}</h3>
+                <p class="news-card-desc">{post.data.description}</p>
+                <div class="news-card-meta">
+                  <span>{post.data.pubDate.toLocaleDateString('es-CO', { year: 'numeric', month: 'short', day: 'numeric' })}</span>
+                  <span>•</span>
+                  <span>{post.data.autor}</span>
+                </div>
+              </div>
+            </a>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <!-- Programación Destacada Hoy -->
+    <section class="schedule-section">
+      <div class="container">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+          <h2 class="section-title" style="margin-bottom: 0;">
+            <span>📻</span> Programación para hoy ({diaHoy})
+          </h2>
+          <a href="/programacion" style="color: var(--gold-400); font-weight: 600;">Ver parrilla semanal completa →</a>
+        </div>
+
+        {(() => {
+          const hoyProg = PROGRAMACION.find(d => d.dia === diaHoy);
+          return hoyProg ? (
+            <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1rem;">
+              {hoyProg.programas.slice(0, 4).map(prog => (
+                <div class:list={['program-card', { franja: prog.esFranja }]} style="margin-bottom: 0;">
+                  {prog.imagen && <img src={prog.imagen} alt={prog.nombre} class="program-card-img" />}
+                  <div class="program-card-info">
+                    <h4 class="program-card-title">{prog.nombre}</h4>
+                    <span class="program-card-time">🕒 {prog.horaInicio} - {prog.horaFin}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : null;
+        })()}
+      </div>
+    </section>
+
+    <Footer />
+    <StreamPlayer />
+  </body>
 </html>

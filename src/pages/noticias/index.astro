@@ -1,0 +1,70 @@
+---
+import { getCollection } from 'astro:content';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import StreamPlayer from '../../components/StreamPlayer.astro';
+import { SITE_TITLE, CATEGORIES } from '../../consts';
+
+const allPosts = await getCollection('blog');
+allPosts.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+---
+
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" type="image/png" href="/logos/Logo Voces 4 mini.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Noticias y Artículos — {SITE_TITLE}</title>
+    <link rel="stylesheet" href="/styles/global.css" />
+  </head>
+  <body>
+    <Header currentPath="/noticias" />
+
+    <div class="page-hero">
+      <div class="container">
+        <h1>Noticias del Campo Colombiano</h1>
+        <p>Información veraz, actualidad agropecuaria, ganadería, medio ambiente y cultura campesina.</p>
+      </div>
+    </div>
+
+    <!-- Categorías -->
+    <section class="container" style="padding: 2rem 0 1rem;">
+      <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+        <a href="/noticias" style="background: var(--green-800); color: white; padding: 0.4rem 1rem; border-radius: 20px; font-size: 0.85rem; font-weight: 600;">Todas</a>
+        {CATEGORIES.map(cat => (
+          <a href={`/secciones/${cat.slug}`} style={`background: ${cat.color}22; color: ${cat.color}; border: 1px solid ${cat.color}; padding: 0.4rem 1rem; border-radius: 20px; font-size: 0.85rem; font-weight: 600;`}>
+            {cat.label}
+          </a>
+        ))}
+      </div>
+    </section>
+
+    <!-- Lista de Noticias -->
+    <section class="section" style="padding-top: 1rem;">
+      <div class="container">
+        <div class="news-grid">
+          {allPosts.map(post => (
+            <a href={`/noticias/${post.slug}`} class="news-card">
+              {post.data.heroImage && (
+                <img src={post.data.heroImage} alt={post.data.title} class="news-card-img" />
+              )}
+              <div class="news-card-body">
+                <span class="news-card-cat">{post.data.categoria}</span>
+                <h3 class="news-card-title">{post.data.title}</h3>
+                <p class="news-card-desc">{post.data.description}</p>
+                <div class="news-card-meta">
+                  <span>{post.data.pubDate.toLocaleDateString('es-CO', { year: 'numeric', month: 'short', day: 'numeric' })}</span>
+                  <span>•</span>
+                  <span>{post.data.autor}</span>
+                </div>
+              </div>
+            </a>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <Footer />
+    <StreamPlayer />
+  </body>
+</html>

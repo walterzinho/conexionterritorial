@@ -1,0 +1,135 @@
+---
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import StreamPlayer from '../components/StreamPlayer.astro';
+import { SITE_TITLE } from '../consts';
+import { PROGRAMACION, DIAS, getDiaActual } from '../data/schedule';
+
+const diaHoy = getDiaActual();
+---
+
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" type="image/png" href="/logos/Logo Voces 4 mini.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Programación Radial — {SITE_TITLE}</title>
+    <link rel="stylesheet" href="/styles/global.css" />
+  </head>
+  <body style="background: var(--dark); color: var(--white);">
+    <Header currentPath="/programacion" />
+
+    <div class="programming-hero">
+      <div class="container">
+        <h1>Nuestra Parrilla de Programación</h1>
+        <p style="color: var(--gray-300);">Programas institucionales, musicales, magazínes y reemisiones de Voces Campesinas.</p>
+        <div class="now-playing-bar">
+          <span>🟢 Transmisión continua 24/7 — El Campo Nos Une</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Pestañas de Días -->
+    <section class="schedule-section" style="padding-top: 2rem;">
+      <div class="container">
+        <div class="schedule-tabs" id="scheduleTabs" role="tablist">
+          {DIAS.map(dia => (
+            <button
+              class:list={['schedule-tab', { active: dia === diaHoy, today: dia === diaHoy }]}
+              data-dia={dia}
+              role="tab"
+              aria-selected={dia === diaHoy ? 'true' : 'false'}
+            >
+              {dia.toUpperCase()} {dia === diaHoy && ' (Hoy)'}
+            </button>
+          ))}
+        </div>
+
+        <!-- Contenedores de Programación por Día -->
+        <div class="schedule-content">
+          {PROGRAMACION.map(d => (
+            <div class="day-schedule" id={`day-${d.dia}`} style={`display: ${d.dia === diaHoy ? 'block' : 'none'};`}>
+              <h3 style="color: var(--gold-400); margin-bottom: 1.2rem; font-family: var(--font-sans); font-size: 1.25rem;">
+                Programación para el {d.dia} ({d.programas.length} {d.programas.length === 1 ? 'programa' : 'programas'})
+              </h3>
+              
+              <div style="display: flex; flex-direction: column; gap: 1rem;">
+                {d.programas.map(prog => (
+                  <div class:list={['program-card', { franja: prog.esFranja }]}>
+                    {prog.imagen ? (
+                      <img src={prog.imagen} alt={prog.nombre} class="program-card-img" />
+                    ) : (
+                      <div class="program-card-img" style="display: flex; align-items: center; justify-content: center; font-size: 1.5rem;">📻</div>
+                    )}
+                    <div class="program-card-info">
+                      <h4 class="program-card-title">{prog.nombre}</h4>
+                      {prog.conductor && (
+                        <div class="program-card-conductor">
+                          <span>🎙️</span> <span>{prog.conductor}</span>
+                        </div>
+                      )}
+                      <p class="program-card-desc">{prog.descripcion}</p>
+                      <div class="program-card-footer">
+                        <span class="program-card-tag">{prog.categoria}</span>
+                      </div>
+                    </div>
+                    <div style="text-align: right; flex-shrink: 0; align-self: center;">
+                      <span class="program-card-time" style="font-weight: 700; color: var(--gold-400); font-size: 0.95rem;">
+                        🕒 {prog.horaInicio} - {prog.horaFin}
+                      </span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <!-- Franjas Musicales Destacadas -->
+    <section style="background: var(--dark-2); padding: 4rem 0; border-top: 1px solid var(--gray-800);">
+      <div class="container">
+        <h2 class="section-title" style="color: var(--white); border-bottom-color: var(--green-500);">
+          <span>🎵</span> Franjas Musicales Diarias
+        </h2>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem;">
+          <div style="background: var(--green-900); padding: 1.5rem; border-radius: 12px; border: 1px solid var(--green-700);">
+            <h3 style="color: var(--green-400); margin-bottom: 0.5rem; font-family: var(--font-sans);">🌅 Alborada Campesina</h3>
+            <p style="color: var(--gray-300); font-size: 0.9rem; margin-bottom: 1rem;">Música campesina para empezar el día con toda la energía del campo colombiano.</p>
+            <span style="color: var(--gold-400); font-weight: 600; font-size: 0.85rem;">Todos los días • 05:00 - 06:00</span>
+          </div>
+          <div style="background: var(--green-900); padding: 1.5rem; border-radius: 12px; border: 1px solid var(--green-700);">
+            <h3 style="color: var(--green-400); margin-bottom: 0.5rem; font-family: var(--font-sans);">🌇 Tardes Campesinas</h3>
+            <p style="color: var(--gray-300); font-size: 0.9rem; margin-bottom: 1rem;">Acompañamiento musical para la tarde en cada vereda y hogar.</p>
+            <span style="color: var(--gold-400); font-weight: 600; font-size: 0.85rem;">Todos los días • 17:00 - 18:00</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <Footer />
+    <StreamPlayer />
+
+    <script>
+      const tabs = document.querySelectorAll('.schedule-tab');
+      tabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+          tabs.forEach(t => {
+            t.classList.remove('active');
+            t.setAttribute('aria-selected', 'false');
+          });
+          tab.classList.add('active');
+          tab.setAttribute('aria-selected', 'true');
+
+          const selectedDia = tab.getAttribute('data-dia');
+          document.querySelectorAll('.day-schedule').forEach(el => {
+            el.style.display = 'none';
+          });
+          const target = document.getElementById(`day-${selectedDia}`);
+          if (target) target.style.display = 'block';
+        });
+      });
+    </script>
+  </body>
+</html>
